@@ -1,9 +1,11 @@
+import { inject, injectable } from "tsyringe";
 import { compare } from "bcryptjs";
-import { getRepository } from "typeorm";
-import User from "../models/User";
 import { sign } from "jsonwebtoken";
-import { jwtConfig } from "../config/auth";
-import AppError from "../errors/AppError";
+import AppError from "@shared/errors/AppError";
+import { jwtConfig } from "@config/auth";
+import User from "../infra/typeorm/entities/User";
+import IUsersRepository from "../repositories/IUsersRepository";
+
 interface Request {
   email: string;
   password: string;
@@ -14,11 +16,15 @@ interface Response {
   token: string;
 }
 
+@injectable()
 class AuthenticateUserService {
-  public async execute({ email, password }: Request): Promise<Response> {
-    const usersRepository = getRepository(User);
+  constructor(
+    @inject("UsersRepository")
+    private usersRepository: IUsersRepository,
+  ) {}
 
-    const findUser = await usersRepository.findOne({ where: { email } });
+  public async execute({ email, password }: Request): Promise<Response> {
+    const findUser = await this.usersRepository.findByEmail(email);
 
     if (!findUser) {
       throw new AppError("Email ou senha incorretos.", 401);
@@ -33,6 +39,7 @@ class AuthenticateUserService {
     delete findUser.password;
 
     const { secret, expiresIn } = jwtConfig;
+
     const token = sign({}, secret, {
       subject: findUser.id,
       expiresIn: expiresIn,

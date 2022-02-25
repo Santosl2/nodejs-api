@@ -1,3 +1,4 @@
+import User from "@modules/users/infra/typeorm/entities/User";
 import {
   Column,
   CreateDateColumn,
@@ -7,7 +8,6 @@ import {
   UpdateDateColumn,
   JoinColumn,
 } from "typeorm";
-import User from "./User";
 
 /**
  * Um para Um (OneToOne) -> Um usuario tem apenas um agendamento
