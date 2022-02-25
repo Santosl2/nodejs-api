@@ -18,6 +18,12 @@ module.exports = {
   },
   plugins: ["@typescript-eslint", "prettier"],
   rules: {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "_",
+      },
+    ],
     "import/extensions": [
       "error",
       "ignorePackages",

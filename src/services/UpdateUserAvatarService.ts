@@ -3,6 +3,7 @@ import { getRepository } from "typeorm";
 import upload from "../config/upload";
 import User from "../models/User";
 import fs from "fs";
+import AppError from "../errors/AppError";
 
 interface Request {
   user_id: string;
@@ -15,7 +16,10 @@ class UpdateUserAvatarService {
     const user = await usersRepository.findOne(user_id);
 
     if (!user) {
-      throw new Error("Apenas usuários autenticados tem acesso a essa rota.");
+      throw new AppError(
+        "Apenas usuários autenticados tem acesso a essa rota.",
+        401,
+      );
     }
 
     if (user.avatar) {

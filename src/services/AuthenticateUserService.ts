@@ -3,6 +3,7 @@ import { getRepository } from "typeorm";
 import User from "../models/User";
 import { sign } from "jsonwebtoken";
 import { jwtConfig } from "../config/auth";
+import AppError from "../errors/AppError";
 interface Request {
   email: string;
   password: string;
@@ -20,13 +21,13 @@ class AuthenticateUserService {
     const findUser = await usersRepository.findOne({ where: { email } });
 
     if (!findUser) {
-      throw new Error("Email ou senha incorretos.");
+      throw new AppError("Email ou senha incorretos.", 401);
     }
 
     const passwordMatch = await compare(password, findUser.password || "");
 
     if (!passwordMatch) {
-      throw new Error("Email ou senha incorretos.");
+      throw new AppError("Email ou senha incorretos.", 401);
     }
 
     delete findUser.password;
