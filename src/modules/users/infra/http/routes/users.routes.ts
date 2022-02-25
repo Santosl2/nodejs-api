@@ -1,50 +1,23 @@
 import uploadConfig from "@config/upload";
-import { CreateUserService } from "@modules/users/services/CreateUserService";
-import { UpdateUserAvatarService } from "@modules/users/services/UpdateUserAvatarService";
 import AppError from "@shared/errors/AppError";
 import ensureAuthenticated from "@modules/users/infra/http/middlewares/ensureAuthenticated";
 import { Router } from "express";
 import { container } from "tsyringe";
 import multer from "multer";
+import UsersController from "../controllers/UsersController";
+import UserAvatarController from "../controllers/UserAvatarController";
 
 const usersRouter = Router();
 
 const upload = multer(uploadConfig);
 
-usersRouter.get("/", (request, response) => {
-  return response.send();
-});
-
-usersRouter.post("/", async (request, response) => {
-  const { name, email, password } = request.body;
-
-  const createUser = container.resolve(CreateUserService);
-
-  const user = await createUser.execute({ name, email, password });
-
-  delete user.password;
-
-  return response.json(user);
-});
+usersRouter.post("/", new UsersController().create);
 
 usersRouter.patch(
   "/avatar",
   ensureAuthenticated,
   upload.single("avatar"),
-  async (request, response) => {
-    const updateUserAvatar = container.resolve(UpdateUserAvatarService);
-
-    if (!request.file) throw new AppError("Oops, você se esqueceu da imagem.");
-
-    const user = await updateUserAvatar.execute({
-      user_id: request.user.id,
-      avatarFileName: request.file.filename,
-    });
-
-    delete user?.password;
-
-    return response.json(user);
-  },
+  new UserAvatarController().update,
 );
 
 export default usersRouter;
