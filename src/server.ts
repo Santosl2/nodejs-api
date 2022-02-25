@@ -7,8 +7,11 @@ import "./database";
 import routes from "./routes";
 import upload from "./config/upload";
 import AppError from "./errors/AppError";
+import cors from "cors";
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 app.use("/files", express.static(upload.directory));
 app.use(routes);
