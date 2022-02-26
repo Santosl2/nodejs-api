@@ -2,15 +2,21 @@ import FakeUsersRepository from "../infra/typeorm/repositories/fakes/FakeUsersRe
 import { AuthenticateUserService } from "./AuthenticateUserService";
 import AppError from "@shared/errors/AppError";
 import { CreateUserService } from "./CreateUserService";
+import FakeHashProvider from "../providers/HashProvider/fakes/FakeHashProvider";
 
 describe("AuthenticateUserService", () => {
   it("should be able to authenticate", async () => {
     const fakeUsersRepository = new FakeUsersRepository();
+    const fakeHashProvider = new FakeHashProvider();
 
-    const createUser = new CreateUserService(fakeUsersRepository);
+    const createUser = new CreateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const authenticateUserService = new AuthenticateUserService(
       fakeUsersRepository,
+      fakeHashProvider,
     );
 
     await createUser.execute({
@@ -29,11 +35,16 @@ describe("AuthenticateUserService", () => {
 
   it("should not be able to authenticate user if password is incorrect", async () => {
     const fakeUsersRepository = new FakeUsersRepository();
+    const fakeHashProvider = new FakeHashProvider();
 
-    const createUser = new CreateUserService(fakeUsersRepository);
+    const createUser = new CreateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const authenticateUserService = new AuthenticateUserService(
       fakeUsersRepository,
+      fakeHashProvider,
     );
 
     await createUser.execute({
@@ -52,9 +63,11 @@ describe("AuthenticateUserService", () => {
 
   it("should not be able to authenticate user if user not exists", async () => {
     const fakeUsersRepository = new FakeUsersRepository();
+    const fakeHashProvider = new FakeHashProvider();
 
     const authenticateUserService = new AuthenticateUserService(
       fakeUsersRepository,
+      fakeHashProvider,
     );
 
     expect(

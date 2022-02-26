@@ -5,6 +5,7 @@ import AppError from "@shared/errors/AppError";
 import { jwtConfig } from "@config/auth";
 import User from "../infra/typeorm/entities/User";
 import IUsersRepository from "../repositories/IUsersRepository";
+import IHashProvider from "../providers/HashProvider/models/IHashProvider";
 
 interface Request {
   email: string;
@@ -21,6 +22,9 @@ class AuthenticateUserService {
   constructor(
     @inject("UsersRepository")
     private usersRepository: IUsersRepository,
+
+    @inject("HashProvider")
+    private hashProvider: IHashProvider,
   ) {}
 
   public async execute({ email, password }: Request): Promise<Response> {
@@ -30,7 +34,10 @@ class AuthenticateUserService {
       throw new AppError("Email ou senha incorretos.", 401);
     }
 
-    const passwordMatch = await compare(password, findUser.password || "");
+    const passwordMatch = await this.hashProvider.compareHash(
+      password,
+      findUser.password || "",
+    );
 
     if (!passwordMatch) {
       throw new AppError("Email ou senha incorretos.", 401);

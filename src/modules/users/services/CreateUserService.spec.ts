@@ -1,12 +1,17 @@
 import FakeUsersRepository from "../infra/typeorm/repositories/fakes/FakeUsersRepository";
 import { CreateUserService } from "./CreateUserService";
 import AppError from "@shared/errors/AppError";
+import FakeHashProvider from "../providers/HashProvider/fakes/FakeHashProvider";
 
 describe("CreateUserService", () => {
   it("should be able to create a new user", async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const createUser = new CreateUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
 
+    const createUser = new CreateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
     const user = await createUser.execute({
       name: "Jesus",
       password: "JesusSave",
@@ -19,7 +24,12 @@ describe("CreateUserService", () => {
 
   it("should not be able to create a new user on the same email", async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const createUser = new CreateUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+
+    const createUser = new CreateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await createUser.execute({
       name: "Jesus",
