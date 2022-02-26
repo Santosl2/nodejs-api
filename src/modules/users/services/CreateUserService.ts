@@ -41,6 +41,3 @@ class CreateUserService {
 }
 
 export { CreateUserService };
-function generateHash(password: string, arg1: number) {
-  throw new Error("Function not implemented.");
-}
