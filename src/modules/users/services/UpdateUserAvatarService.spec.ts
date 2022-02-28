@@ -1,20 +1,24 @@
 import FakeUsersRepository from "../infra/typeorm/repositories/fakes/FakeUsersRepository";
-import { CreateUserService } from "./CreateUserService";
 import AppError from "@shared/errors/AppError";
-import FakeHashProvider from "../providers/HashProvider/fakes/FakeHashProvider";
 import FakeDiskUploadProvider from "@shared/container/providers/UploadProvider/fakes/FakeUploadProvider";
 import { UpdateUserAvatarService } from "./UpdateUserAvatarService";
 
-describe("UpdateUserAvatar", () => {
-  it("should be able to update a user avatar", async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeDiskUploadProvider = new FakeDiskUploadProvider();
+let fakeUsersRepository: FakeUsersRepository;
+let fakeDiskUploadProvider: FakeDiskUploadProvider;
+let uploadUserAvatar: UpdateUserAvatarService;
 
-    const uploadUserAvatar = new UpdateUserAvatarService(
+describe("UpdateUserAvatar", () => {
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    fakeDiskUploadProvider = new FakeDiskUploadProvider();
+
+    uploadUserAvatar = new UpdateUserAvatarService(
       fakeUsersRepository,
       fakeDiskUploadProvider,
     );
+  });
 
+  it("should be able to update a user avatar", async () => {
     const user = await fakeUsersRepository.create({
       name: "John Doe",
       email: "johndoe@gmail.com",
@@ -30,15 +34,7 @@ describe("UpdateUserAvatar", () => {
   });
 
   it("should delete old avatar when updating new one", async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeDiskUploadProvider = new FakeDiskUploadProvider();
-
     const deleteFile = jest.spyOn(fakeDiskUploadProvider, "deleteFile");
-
-    const uploadUserAvatar = new UpdateUserAvatarService(
-      fakeUsersRepository,
-      fakeDiskUploadProvider,
-    );
 
     const user = await fakeUsersRepository.create({
       name: "John Doe",
@@ -61,14 +57,6 @@ describe("UpdateUserAvatar", () => {
   });
 
   it("should not be able to update a user avatar if user not exists", async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeDiskUploadProvider = new FakeDiskUploadProvider();
-
-    const uploadUserAvatar = new UpdateUserAvatarService(
-      fakeUsersRepository,
-      fakeDiskUploadProvider,
-    );
-
     expect(
       uploadUserAvatar.execute({
         user_id: "johndoe",
