@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { hash } from "bcryptjs";
 import AppError from "@shared/errors/AppError";
 import User from "../infra/typeorm/entities/User";
 import IUsersRepository from "../repositories/IUsersRepository";
