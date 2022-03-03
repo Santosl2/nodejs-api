@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 
 class AppointmentsController {
   public async create(request: Request, response: Response) {
+    const userId = request.user.id;
     const { provider, date } = request.body;
 
     const parsedDate = parseISO(date);
@@ -13,6 +14,7 @@ class AppointmentsController {
     const appointment = await createAppointment.execute({
       date: parsedDate,
       provider,
+      user_id: userId,
     });
 
     return response.json(appointment);
