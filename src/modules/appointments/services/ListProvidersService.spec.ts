@@ -24,12 +24,6 @@ describe("ListProvidersService", () => {
       password: "blablacar",
     });
 
-    await fakeUsersRepository.create({
-      name: "John Terere",
-      email: "johndoe2c@gmail.com",
-      password: "blablacar",
-    });
-
     const loggedUser = await fakeUsersRepository.create({
       name: "Santosl2",
       email: "mfilype@gmail.com",
