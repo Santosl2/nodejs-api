@@ -11,14 +11,14 @@ import UsersRepository from "@modules/users/infra/typeorm/repositories/UsersRepo
 import IUserTokensRepository from "@modules/users/repositories/IUserTokensRepository";
 import UserTokensRepository from "@modules/users/infra/typeorm/repositories/UserTokensRepository";
 
-container.registerSingleton<IAppointmentsRepository>(
-  "AppointmentRepository",
-  AppointmentRepository,
-);
-
 container.registerSingleton<IUsersRepository>(
   "UsersRepository",
   UsersRepository,
+);
+
+container.registerSingleton<IAppointmentsRepository>(
+  "AppointmentRepository",
+  AppointmentRepository,
 );
 
 container.registerSingleton<IUserTokensRepository>(
