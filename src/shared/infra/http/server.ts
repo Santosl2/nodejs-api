@@ -12,6 +12,7 @@ import upload from "@config/upload";
 
 import "@shared/container";
 import AppError from "@shared/errors/AppError";
+import { errors } from "celebrate";
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.use(cors());
 app.use(express.json());
 app.use("/files", express.static(upload.uploadsFolder));
 app.use(routes);
+
+app.use(errors());
 
 app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   if (err instanceof AppError) {
